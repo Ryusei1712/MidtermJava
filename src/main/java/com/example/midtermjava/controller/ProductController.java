@@ -1,7 +1,7 @@
-package com.example.midtermjava;
+package com.example.midtermjava.controller;
 
-import com.example.midtermjava.Product;
-import com.example.midtermjava.ProductService;
+import com.example.midtermjava.model.Product;
+import com.example.midtermjava.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ public class ProductController {
 
     @GetMapping
     public List<Product> getAllProducts() {
-        System.out.println("Request success!");
         return productService.getAllProducts();
     }
 
@@ -27,7 +26,6 @@ public class ProductController {
         Product addedProduct = productService.addProduct(product);
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Optional<Product> productOptional = Optional.ofNullable(productService.getProductById(id));
@@ -36,63 +34,77 @@ public class ProductController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/sortedByBrand")
+    public ResponseEntity<List<Product>> getAllProductsSortedByBrand() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByBrand();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
     }
 
-    // PUT: Replace the entire product with new data based on its id
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-        Optional<Product> existingProductOptional = Optional.ofNullable(productService.getProductById(id));
-
-        if (existingProductOptional.isPresent()) {
-            Product existingProduct = existingProductOptional.get();
-            existingProduct.setCode(updatedProduct.getCode());
-            existingProduct.setProductName(updatedProduct.getProductName());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setIllustration(updatedProduct.getIllustration());
-            existingProduct.setDescription(updatedProduct.getDescription());
-
-            productService.updateProduct(id, existingProduct);
-
-            return new ResponseEntity<>(existingProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/sortedByPrice")
+    public ResponseEntity<List<Product>> getAllProductsSortedByPrice() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByPrice();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
     }
 
-    // PATCH: Update some information of a product based on its id
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> partiallyUpdateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-        Optional<Product> existingProductOptional = Optional.ofNullable(productService.getProductById(id));
-
-        if (existingProductOptional.isPresent()) {
-            Product existingProduct = existingProductOptional.get();
-
-            // Check and update only non-null fields
-            if (updatedProduct.getCode() != null) {
-                existingProduct.setCode(updatedProduct.getCode());
-            }
-            if (updatedProduct.getProductName() != null) {
-                existingProduct.setProductName(updatedProduct.getProductName());
-            }
-            if (updatedProduct.getPrice() != 0) {
-                existingProduct.setPrice(updatedProduct.getPrice());
-            }
-            if (updatedProduct.getIllustration() != null) {
-                existingProduct.setIllustration(updatedProduct.getIllustration());
-            }
-            if (updatedProduct.getDescription() != null) {
-                existingProduct.setDescription(updatedProduct.getDescription());
-            }
-
-            productService.updateProduct(id, existingProduct);
-
-            return new ResponseEntity<>(existingProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/sortedByColor")
+    public ResponseEntity<List<Product>> getAllProductsSortedByColor() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByColor();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
     }
+
+    @GetMapping("/sortedByFan")
+    public ResponseEntity<List<Product>> getAllProductsSortedByFan() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByFan();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
+    }
+
+    @GetMapping("/sortedByPower")
+    public ResponseEntity<List<Product>> getAllProductsSortedByPower() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByPower();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
+    }
+
+    @GetMapping("/sortedByAccessory")
+    public ResponseEntity<List<Product>> getAllProductsSortedByAccessory() {
+        List<Product> sortedProducts = productService.getAllProductsSortedByAccessory();
+        return new ResponseEntity<>(sortedProducts, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByBrand")
+    public ResponseEntity<List<Product>> searchProductsByBrand(@RequestParam String brand) {
+        List<Product> searchResults = productService.searchProductsByBrand(brand);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByPriceRange")
+    public ResponseEntity<List<Product>> searchProductsByPriceRange(
+            @RequestParam int minPrice, @RequestParam int maxPrice) {
+        List<Product> searchResults = productService.searchProductsByPriceRange(minPrice, maxPrice);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByColor")
+    public ResponseEntity<List<Product>> searchProductsByColor(@RequestParam String color) {
+        List<Product> searchResults = productService.searchProductsByColor(color);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByFan")
+    public ResponseEntity<List<Product>> searchProductsByFan(@RequestParam int fan) {
+        List<Product> searchResults = productService.searchProductsByFan(fan);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByPower")
+    public ResponseEntity<List<Product>> searchProductsByPower(@RequestParam String power) {
+        List<Product> searchResults = productService.searchProductsByPower(power);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+    @GetMapping("/searchByAccessory")
+    public ResponseEntity<List<Product>> searchProductsByAccessory(@RequestParam String accessory) {
+        List<Product> searchResults = productService.searchProductsByAccessory(accessory);
+        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+    }
+
+
 }

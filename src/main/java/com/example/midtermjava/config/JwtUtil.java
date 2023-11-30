@@ -1,4 +1,4 @@
-package com.example.midtermjava;
+package com.example.midtermjava.config;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,6 +24,4 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
-
-    // Thêm các phương thức kiểm tra token, lấy thông tin từ token nếu cần
 }

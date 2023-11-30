@@ -1,8 +1,13 @@
-package com.example.midtermjava;
+package com.example.midtermjava.service;
 
+import com.example.midtermjava.model.CartItem;
+import com.example.midtermjava.model.Order;
+import com.example.midtermjava.model.Product;
+import com.example.midtermjava.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,10 +15,8 @@ import java.util.Optional;
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
-
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
+    @Autowired
+    private CartService cartService;
 
     public Order addOrder(Order order) {
         return orderRepository.save(order);
@@ -23,11 +26,17 @@ public class OrderService {
         return orderRepository.findById(orderId);
     }
 
-    public void updateOrder(Long orderId, Order updatedOrder) {
-        orderRepository.save(updatedOrder);
+    public List<Product> getProductsByUsername(String username) {
+        List<CartItem> cartItems = cartService.getCartItemsByUsername(username);
+
+
+        List<Product> products = new ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+            product.setCartQuantity(cartItem.getQuantity());
+            products.add(product);
+        }
+        return products;
     }
 
-    public void deleteOrder(Long orderId) {
-        orderRepository.deleteById(orderId);
-    }
 }

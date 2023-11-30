@@ -1,43 +1,50 @@
-package com.example.midtermjava;
+package com.example.midtermjava.model;
 
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.List;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "userOrder")
+@Table(name = "user_Order")
 @Entity
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String email;
+    private String phoneNumber;
+    private String address;
 
-    private String orderNumber;
-    private float totalSellingPrice;
+    @ManyToMany
+    @JoinTable(
+            name = "order_product",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    public Order(String email, String phoneNumber, String address, List<Product> products) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.products = products;
+    }
 
-    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id")
-    private List<Product> productList;
     @Override
     public String toString() {
         return "Order{" +
-                "orderID=" + id +
-                ", orderNumber='" + orderNumber + '\'' +
-                ", totalSellingPrice=" + totalSellingPrice +
-                ", user=" + user +
-                ", productList=" + productList +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", products=" + products +
                 '}';
     }
 }

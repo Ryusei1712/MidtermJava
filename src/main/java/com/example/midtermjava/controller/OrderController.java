@@ -1,7 +1,8 @@
-package com.example.midtermjava;
+package com.example.midtermjava.controller;
 
-import com.example.midtermjava.Order;
-import com.example.midtermjava.OrderService;
+import com.example.midtermjava.model.Order;
+import com.example.midtermjava.model.Product;
+import com.example.midtermjava.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,39 +17,23 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
-    }
-
-    @PostMapping
+    @PostMapping("/place-order")
     public ResponseEntity<Order> addOrder(@RequestBody Order order) {
+        String email = order.getEmail();
+        List<Product> products = orderService.getProductsByUsername(email);
+
+        order.setProducts(products);
+
         Order addedOrder = orderService.addOrder(order);
+
         return new ResponseEntity<>(addedOrder, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
         Optional<Order> orderOptional = orderService.getOrderById(id);
         return orderOptional.map(order -> new ResponseEntity<>(order, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateOrder(@PathVariable Long id, @RequestBody Order updatedOrder) {
-        Optional<Order> existingOrderOptional = orderService.getOrderById(id);
-
-        if (existingOrderOptional.isPresent()) {
-            orderService.updateOrder(id, updatedOrder);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        orderService.deleteOrder(id);
-        return ResponseEntity.noContent().build();
     }
 }
